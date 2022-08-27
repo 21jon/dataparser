@@ -19,9 +19,9 @@ def data_import_csv(data_set_path):
     return df
 
 
-def data_to_sql(data_frame: pd.DataFrame, table_name, engine):
+def data_to_sql(data_frame: pd.DataFrame, table_name, engine, ):
     data_frame.to_sql(table_name, con=engine,
-                      if_exists='replace', index=False)
+                      if_exists='replace', index=False, )
 
 
 def data_to_plot(data_frame: pd.DataFrame, plot_path):
@@ -36,18 +36,18 @@ def data_to_plot(data_frame: pd.DataFrame, plot_path):
         data_frame.index), step=temp).tolist()
 
     plt.plot(x_values, data_frame['bar'].tolist())
+    plt.legend(['bar'])
+
     plt.savefig(plot_path, dpi=1200,)
 
 
-def create_function_from_data(data_frame: pd.DataFrame):
-    pass
+def find_extreme_values(data_frame: pd.DataFrame, column_name):
+    max_value = data_frame[column_name].max()
+    min_value = data_frame[column_name].min()
+    return max_value, min_value
 
 
-if __name__ == "__main__":
-
-    # Set the path to the data set and database
-
-    # User information about the data set
+def userinput():
     data_set_path = None
     try:
         data_set_path = os.path.abspath(sys.argv[1])
@@ -72,7 +72,15 @@ if __name__ == "__main__":
     print(f"Table name: {tabelName}")
 
     if input("Continue? (y/n): ") == "n":
-        exit()
+        exit(code=0)
+
+    return data_set_path, tabelName, database_name, plot_set_path
+
+
+def main():
+    # Set the path to the data set and database
+    data_set_path, tabelName, database_name, plot_set_path = userinput()
+    # User information about the data set
 
     # Create a database connection and import the dataset into the database
     engine = create_database_connection(database_name)
@@ -87,4 +95,9 @@ if __name__ == "__main__":
     print("Creating plot")
     data_to_plot(data_frame, plot_set_path)
     print("Plot created")
+
     print("Done")
+
+
+if __name__ == "__main__":
+    main()
